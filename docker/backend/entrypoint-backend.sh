@@ -23,3 +23,5 @@ if [ ! -f "/app/.prisma_initialized" ]; then
 else
   echo "Prisma initialization already done, skipping..."
 fi
+
+yarn backend

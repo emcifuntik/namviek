@@ -1,0 +1,68 @@
+services:
+  namviek-backend:
+    container_name: backend
+    build:
+      context: .
+      dockerfile: ./docker/backend/Dockerfile
+    image: namviek-backend
+    environment:
+      - NEXT_PUBLIC_FE_GATEWAY=${NEXT_PUBLIC_FE_GATEWAY}
+      - NEXT_PUBLIC_BE_GATEWAY=${NEXT_PUBLIC_BE_GATEWAY}
+      - NEXT_PUBLIC_APP_NAME=${NEXT_PUBLIC_APP_NAME}
+      - MONGODB_URL=${MONGODB_URL}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - JWT_REFRESH_KEY=${JWT_REFRESH_KEY}
+      - JWT_VERIFY_USER_LINK_TOKEN_EXPIRED=${JWT_VERIFY_USER_LINK_TOKEN_EXPIRED}
+      - JWT_TOKEN_EXPIRED=${JWT_TOKEN_EXPIRED}
+      - JWT_REFRESH_EXPIRED=${JWT_TOKEN_EXPIRED}
+      - REDIS_HOST=${REDIS_HOST}
+    volumes:
+      - appdata:/app
+    depends_on:
+      - namviek-redis
+    networks:
+      - namviek-network
+
+  namviek-frontend:
+    container_name: frontend
+    build:
+      context: .
+      dockerfile: ./docker/frontend/Dockerfile
+    image: namviek-frontend
+    environment:
+      - NEXT_PUBLIC_FE_GATEWAY=${NEXT_PUBLIC_FE_GATEWAY}
+      - NEXT_PUBLIC_BE_GATEWAY=${NEXT_PUBLIC_BE_GATEWAY}
+      - NEXT_PUBLIC_APP_NAME=${NEXT_PUBLIC_APP_NAME}
+      - MONGODB_URL=${MONGODB_URL}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - JWT_REFRESH_KEY=${JWT_REFRESH_KEY}
+      - JWT_VERIFY_USER_LINK_TOKEN_EXPIRED=${JWT_VERIFY_USER_LINK_TOKEN_EXPIRED}
+      - JWT_TOKEN_EXPIRED=${JWT_TOKEN_EXPIRED}
+      - JWT_REFRESH_EXPIRED=${JWT_TOKEN_EXPIRED}
+      - REDIS_HOST=${REDIS_HOST}
+    depends_on:
+      - namviek-backend
+    networks:
+      - namviek-network
+
+  namviek-redis:
+    container_name: redis
+    image: 'redis:alpine'
+    networks:
+      - namviek-network
+
+  namviek-mongo:
+    container_name: mongo
+    image: 'mongo:latest'
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+    networks:
+      - namviek-network
+
+volumes:
+  appdata:
+
+networks:
+  namviek-network:
+    driver: bridge
