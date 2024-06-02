@@ -53,10 +53,11 @@ services:
 
   namviek-mongo:
     container_name: mongo
-    image: 'mongo:latest'
+    image: prismagraphql/mongo-single-replica:4.4.3-bionic
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - INIT_WAIT_SEC=3
     networks:
       - namviek-network
 
